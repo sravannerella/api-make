@@ -1,0 +1,15 @@
+{
+  "name": "api-make",
+  "version": "1.0.0",
+  "description": "this is a test application which updates employees object by REST API calls",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "author": "Sravan nerella",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "nodemon": "^1.11.0"
+  }
+}
