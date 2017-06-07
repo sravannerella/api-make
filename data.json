@@ -1,0 +1,19 @@
+{
+  "Employees": [
+    {
+      "fname": "Sravan",
+      "lname": "Nerella",
+      "age": 22
+    },
+    {
+      "fname": "Aditya",
+      "lname": "Nerella",
+      "age": 20
+    },
+    {
+      "fname": "Raghu",
+      "lname": "Meduri",
+      "age": 28
+    }
+  ]
+}

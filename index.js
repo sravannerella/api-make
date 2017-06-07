@@ -1,19 +1,7 @@
-var workers = {
-	Employees: [
-		{
-			fname: "Sravan",
-			lname: "Nerella",
-			age : 22
-		}, 
-		{
-			fname: "Aditya",
-			lname: "Nerella",
-			age: 20
-		}
-	]
-}
-
 var express = require("express");
+var fs = require("fs");
+var file = fs.readFileSync("data.json");
+var workers = JSON.parse(file);
 var app = express();
 
 app.listen(8009, function() {
@@ -47,6 +35,9 @@ app.get("/add/:name?/:lname?/:age?", function(req, resp){
 			lname: lname,
 			age: age
 		});
+
+		var wData = JSON.stringify(workers,null, 2);
+		fs.writeFile("data.json",wData);
 
 		reply = {
 			msg:"Employee Added Successfully"
