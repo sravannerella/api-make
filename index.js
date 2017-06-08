@@ -13,7 +13,7 @@
 var express = require("express");
 var fs = require("fs");
 
-// Reading the file using File System
+// Reading the file using File System and returns the buffer
 var file = fs.readFileSync("data.json");
 // Parses the file and converts into JSON objects in 
 // workers variable
@@ -54,8 +54,35 @@ function writeJSONToFile(file, data){
 	fs.writeFile(file,wData);
 }
 
+function replyInvalid(){
+	var reply  = {
+		msg : "Invalid Request",
+		reason: "Try requesting with POST instead of GET."
+	};
+	return reply;
+}
+
+app.route(["/add*","/mod*","/del*"])
+	.get(function(req, resp){
+		resp.send(replyInvalid());
+	})
+	.put(function(req, resp){
+		resp.send(replyInvalid());
+	});
+
+app.route(["/add*","/mod*"])
+	.delete(function(req, resp){
+		resp.send(replyInvalid());
+	});
+
+app.route("/del*")
+	.post(function(req, resp){
+		resp.send(replyInvalid());
+	});
+
+
 // Add Employee
-app.get("/add/:name?/:lname?/:age?", function(req, resp){
+app.post("/add/:name?/:lname?/:age?", function(req, resp){
 	//Gives the Required parameters
 	var data = req.params;
 	var fname = data.name;
@@ -89,8 +116,8 @@ app.get("/add/:name?/:lname?/:age?", function(req, resp){
 	}
 });
 
-
-app.get("/mod/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", function(req, resp){
+// Modify the existing data
+app.post("/mod/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", function(req, resp){
 	var data = req.params;
 	var name = data.name;
 	var fname = data.fname;
@@ -127,7 +154,7 @@ app.get("/mod/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", function(req,
 });
 
 // Delete an employee
-app.get("/del/fname=:name?", function(req, resp){
+app.delete("/del/fname=:name?", function(req, resp){
 	var data = req.params;
 	var fname = data.name;
 	var lname = data.lname;

@@ -1,7 +1,7 @@
 {
   "Employees": [
     {
-      "fname": "Sravan",
+      "fname": "Akhil",
       "lname": "Nerella",
       "age": 22
     },
@@ -11,9 +11,9 @@
       "age": 20
     },
     {
-      "fname": "Raghu",
-      "lname": "Meduri",
-      "age": 28
+      "fname": "Surya",
+      "lname": "Nerella",
+      "age": 48
     }
   ]
 }
