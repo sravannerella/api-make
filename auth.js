@@ -1,12 +1,24 @@
-module.exports.authenticate = function(req, resp){
-	var reply = {};
+var jwt = require('jsonwebtoken');
+var service = require('./apiService');
 
-	var data = req.parameters;
-	var key = req.key;
+module.exports.authenticate = function(req, resp) {
 
-	reply = {
-		key: key
-	};
+	var data = req.params;
+	var fname = data.fname;
 
-	resp.send(reply);
+	var user = service.searchIt(fname, "fname");
+	if(JSON.stringify(user)=='{}'){
+		resp.send({
+			success: false,
+			msg: "User not found"
+		});
+	} else {
+		var token = jwt.sign(user, process.env.SECRET_KEY,{expiresIn: 4000});
+	
+		resp.send({
+			success: true,
+			token: token
+		});
+	}
+
 };

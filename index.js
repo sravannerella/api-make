@@ -11,6 +11,8 @@
 // Library variables
 var express = require("express");
 var fs = require("fs");
+var secure = express.Router();
+var jwt = require('jsonwebtoken');
 
 // Reading the file using File System and returns the buffer
 var file = fs.readFileSync("data.json");
@@ -19,6 +21,29 @@ var file = fs.readFileSync("data.json");
 // workers variable
 var workers = JSON.parse(file);
 var app = express();
+
+var auth = require('./auth');
+app.use("/checkauth", secure);
+
+secure.use(function(req, resp, next){
+	var token = req.headers["token"];
+	if(token){
+		jwt.verify(token, process.env.SECRET_KEY, function(err, decode){
+			if(err){
+				resp.send({
+					msg: "Invalid Key"
+				});
+			} else{
+				resp.send({
+					msg: "verified"
+				});
+			}
+		});
+
+	} else{
+		resp.send("NOPE");
+	}
+});
 
 // API Calls
 require('./apiService')(app, workers);
