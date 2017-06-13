@@ -20,6 +20,9 @@ var file = fs.readFileSync("data.json");
 // Parses the file and converts into JSON objects in 
 // workers variable
 var workers = JSON.parse(file);
+
+module.exports.workers = workers;
+
 var app = express();
 
 var auth = require('./auth');

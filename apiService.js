@@ -1,6 +1,11 @@
 var http = require('http');
+var addItems = require('./addItems');
+var modFile = require('./modFile');
+var deleteItem = require('./deleteItem');
+var searchItem = require('./searchItem');
 
-module.exports = function(app, workers){
+module.exports = function(app, workers)
+{
 	var fs = require('fs');
 	// Server creation
 	app.listen(8009, function() {
@@ -14,52 +19,7 @@ module.exports = function(app, workers){
 		}
 	});
 
-	function authorize(token, callback){
-
-		var options = {
-		  "method": "GET",
-		  "hostname": "localhost",
-		  "port": "8009",
-		  "path": "/checkauth",
-		  "headers": {
-		    "token": token,
-		    "cache-control": "no-cache"
-		  }
-		};
-
-		return http.request(options, function(res){
-			var result = '';			
-			res.on("data", function(chunk){
-				result += chunk;
-			});
-
-			res.on("end", function(){
-				var body = JSON.parse(result);
-				callback(body);
-			});
-
-		}).end();
-
-	}
-
-	function searchIt(data, property){
-
-		var val = false;
-		for(var key in workers["Employees"]){
-			if(workers["Employees"][key][property]==data){
-				reply = workers["Employees"][key];
-				val = true;
-				break;
-			}
-		}
-		var reply = {
-			key : key,
-			val : val
-		};
-		return reply;
-	}
-
-	// Sends the required information
+	// Sends the required information to AUTH.js
 	function searchSend(data, property){
 		var val = false;
 		for(var key in workers["Employees"]){
@@ -77,14 +37,9 @@ module.exports = function(app, workers){
 		
 		return reply;
 	}
-
 	module.exports.searchIt = searchSend;
 
-	function writeJSONToFile(file, data){
-		var wData = JSON.stringify(data,null, 2);
-		fs.writeFile(file,wData);
-	}
-
+	// Invalid call
 	function replyInvalid(){
 		var reply  = {
 			msg : "Invalid Request",
@@ -92,8 +47,9 @@ module.exports = function(app, workers){
 		};
 		return reply;
 	}
+	module.exports.replyInvalid = replyInvalid;
 
-	app.route(["/add*","/mod*","/del*"])
+	app.route(["/add*","/del*"])
 		.get(function(req, resp){
 			resp.send(replyInvalid());
 		})
@@ -106,191 +62,28 @@ module.exports = function(app, workers){
 			resp.send(replyInvalid());
 		});
 
-	app.route("/del*")
+	app.route("/del*","/mod*")
 		.post(function(req, resp){
 			resp.send(replyInvalid());
 		});
 
 
 	// Add Employee
-	app.post("/add/:token/:name?/:lname?/:age?", function(req, resp){
-		//Gives the Required parameters
-		var data = req.params;
-		var fname = data.name;
-		var lname = data.lname;
-		var age = Number(data.age);
-		var token = data.token;
-
-		var reply;
-
-		if(!fname || !lname || !age){
-			reply = {
-				msg:"Invalid request."
-			}
-			resp.send(reply);
-		} else{
-
-			authorize(token, function(result){
-
-				if(result["msg"]=="verified"){
-					workers["Employees"].push({
-						fname: fname,
-						lname: lname,
-						age: age
-					});
-
-					writeJSONToFile('data.json', workers);
-
-					reply = {
-						msg:"Employee Added Successfully"
-					}
-
-					if(resp.statusCode == 200){
-						resp.send(reply);
-					}
-
-				} else{
-					reply = {
-						msg:"Invalid request or key."
-					}
-					resp.send(reply);
-				}
-				return true;
-			});
-		}
-	});
+	app.post("/add/:token/:name?/:lname?/:age?", addItems.add);
 
 	// Modify the existing data
-	app.post("/mod/:token/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", function(req, resp){
-		var data = req.params;
-		var name = data.name;
-		var fname = data.fname;
-		var lname = data.lname;
-		var age = Number(data.age);
-		var token = data.token;
-		var reply = {};
-
-		authorize(token, function(result){
-			if(!name || !fname || !lname || !age){
-				reply = {
-					msg:"Invalid request."
-				}
-			} else{
-				if(result["msg"]=="verified"){
-					var jsonVal = searchIt(name, "fname");
-					var key = jsonVal["key"];
-					var val = jsonVal["val"];
-
-					if(val){
-						workers["Employees"][key]["fname"] = fname;
-						workers["Employees"][key]["lname"] = lname;
-						workers["Employees"][key]["age"] = age;
-
-						writeJSONToFile('data.json', workers);
-
-						reply = {
-							msg: "Modified",
-							obj: workers["Employees"][key]
-						}
-					} else{
-						reply = {
-							msg: "Name not found"
-						};
-					}
-				} else{
-					reply = {
-						msg: "Invalid Request or key"
-					};
-				}
-			}
-			resp.send(reply);
-			return true;
-		});
-	});
+	app.put("/mod/:token/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", modFile.mod);
 
 	// Delete an employee
-	app.delete("/del/:token/fname=:name?", function(req, resp){
-		var data = req.params;
-		var fname = data.name;
-		var token = data.token;
-		var reply = {};
-
-		// Name is given
-		authorize(token, function(result){
-
-			if(fname){	
-				console.log(result);
-
-				if(result["msg"]=="verified"){
-					var val = false;
-					var jsonVal = searchIt(fname, "fname");
-					var key = jsonVal["key"];
-					var val = jsonVal["val"];
-				
-					// Splices the array by the key as index and deletes the element
-					workers["Employees"].splice(key,1);
-					writeJSONToFile('data.json', workers);
-
-					if(val){
-						reply = {
-							msg: "Name deleted"
-						}
-					} else{
-						reply = {
-							msg : "Name not found"
-						}
-					}
-				} else{
-					reply = {
-						msg: "Invalid Request or key"
-					};
-				}
-			} else{
-				reply = {
-					msg: "Invalid Request"
-				}
-			}
-			resp.send(reply);
-			return true;
-		});
-	});
+	app.delete("/del/:token/fname=:name?", deleteItem.del);
 
 
 	// Search an employee
-	app.get("/search/fname=:name?", function(req, resp){
-		var data = req.params;
-		var fname = data.name;
-		var lname = data.lname;
-		var age = Number(data.age);
-		var reply = {};
-
-		if(fname){
-			var jsonVal = searchIt(fname, "fname");
-			var val = jsonVal["val"];
-			var key = jsonVal["key"];
-
-			var reply = workers["Employees"][key];
-
-			if(val){
-				reply = {
-					msg: "Name found",
-					obj: reply
-				}
-			} else{
-				reply = {
-					msg : "Name not found"
-				}
-			}
-		} else{
-			reply = {
-				msg: "Invalid Request"
-			}
-		}
-		resp.send(reply);
-	});
+	app.get("/search/fname=:name?", searchItem.search);
 
 	process.env.SECRET_KEY = "25asd9eqw3lp";
 	var auth = require('./auth');
+	
 	// User key Authorize
 	app.get("/auth/:fname", auth.authenticate);
 }

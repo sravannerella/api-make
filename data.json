@@ -1,12 +1,6 @@
 {
   "Employees": [
     {
-      "fname": "Akhil",
-      "lname": "Nerella",
-      "age": 22,
-      "key": "128qnasdh9123m25"
-    },
-    {
       "fname": "Aditya",
       "lname": "Nerella",
       "age": 20,
@@ -28,6 +22,11 @@
       "fname": "Akhil",
       "lname": "Nerella",
       "age": 24
+    },
+    {
+      "fname": "Stranger",
+      "lname": "Beauty",
+      "age": 22
     }
   ]
 }
