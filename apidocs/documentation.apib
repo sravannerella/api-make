@@ -53,6 +53,19 @@ This is the API for inserting, deleting, modifying and searching an employees fr
 		- obj (array[Employee])
 
 
+# Group Users
+
+Section for the people whose name is already available in the data.json file.
+
+## GET Access Token [GET /auth/{fname}]
++ Parameters
+	+ fname: `Sravan` (string) - Name of the Employee
+
++ Response 200 (application/json)
+	+ Attributes
+		- success: `true` (boolean) - Created a key or not
+		- token: `A big big key` (string) - This is the token used to add, delete and modify users
+
 # Data Structures
 
 ## Employee (object)
