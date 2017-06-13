@@ -1,0 +1,63 @@
+FORMAT: 1A
+HOST: http://localhost:8009
+
+# Employees API Development
+
+This is the API for inserting, deleting, modifying and searching an employees from a data.json file.
+
+## Show all Employees [GET /]
++ Response 200 (application/json)
+	+ Attributes
+		- Employees (array[Employee])
+
+## Add a new Employee [POST /add/{token}/{fname}/{lname}/{age}]
++ Parameters
+	+ token: `some key` (string) - This key is used to authorize the user
+	+ fname: `Sravan` (string) - This is the first name of the new employee
+	+ lname: `Nerella` (string) - This is the last name of the new employee
+	+ age: `20` (number) - This is the age of the new employee
+
++ Response 200 (application/json)
+	+ Attributes
+		- msg: `Employee added successfully` (string) - Status of the request
+
+## Modify Employee [PUT /mod/{token}/fname={name}/fname={fname}/lname={lname}/age={age}]
++ Parameters
+	+ token: `some key` (string) - This key is used to authorize the user
+	+ name: `Akhil` (string) - This is current first name of the user
+	+ fname: `Sravan` (string) - This is the modified or new first name of the user
+	+ lname: `Nerella` (string) - This is the modified or new last name of the user
+	+ age: `21` (string) - This is the modified or new age of the user
+
++ Response 200 (application/json)
+	+ Attributes
+		- msg: `Modified` (string) - Status of the request
+		- obj (array[Employee])
+
+## Delete Employee [DELETE /del/{token}/fname={fname}]
++ Parameters
+	+ token: `some key` (string) - This key is used to authorize the user
+	+ fname: `Sravan` (string) - This is name to be deleted from the list
+
++ Response 200 (application/json)
+	+ Attributes
+		- msg: `Name deleted` (string) - status of the request
+
+## Search a Employee [GET /search/fname={fname}]
++ Parameters
+	+ fname: `Sravan` (string) = Name of the Employee to delete
+
++ Response 200 (application/json)
+	+ Attributes
+		- msg: `Name found` (string) - status of the request
+		- obj (array[Employee])
+
+
+# Data Structures
+
+## Employee (object)
+- fname: `Aditya` (string) - The first name of the employee
+- lname: `Nerella` (string) - The last name of the employee
+- age: `20` (number) - The age of the employee
+- key: `random number` (string) - Random string for now
+

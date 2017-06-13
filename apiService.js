@@ -77,7 +77,6 @@ module.exports = function(app, workers)
 	// Delete an employee
 	app.delete("/del/:token/fname=:name?", deleteItem.del);
 
-
 	// Search an employee
 	app.get("/search/fname=:name?", searchItem.search);
 
