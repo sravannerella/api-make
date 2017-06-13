@@ -15,6 +15,7 @@ basePath: /v1
 produces:
   - application/json
 paths:
+  
   /:
     get:
       summary: The whole list of users or Employees
