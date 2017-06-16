@@ -1,32 +1,36 @@
 FORMAT: 1A
 HOST: http://localhost:8009
 
-# Employees API Development
-
-This is the API for inserting, deleting, modifying and searching an employees from a data.json file.
+# Employees CRUD API
+**This API allows you to inserting, deleting, modifying and searching an employees from a data.json file.**
 
 ## Show all Employees [GET /]
+**Display all Users/Employees**
 + Response 200 (application/json)
 	+ Attributes
 		- Employees (array[Employee])
 
-## Search a Employee [GET /search/fname={fname}]
+## Search a Employee [GET /{fname}]
+**Search an User/Employee**
 + Parameters
-	+ fname: `Sravan` (string) = Name of the Employee to delete
+	+ fname: `Sravan` (string) - Name of the Employee to delete
 
 + Response 200 (application/json)
 	+ Attributes
 		- msg: `Name found` (string) - status of the request
 		- obj (array[Employee])
 
+# Data Structures
 
-# Group Users
+## Employee (object)
++ fname: `Aditya` (string) - The first name of the employee
++ lname: `Nerella` (string) - The last name of the employee
++ age: `20` (number) - The age of the employee
 
-Section for the people whose name is already available in the data.json file.
-**IMPORTANT: For making changes to the data.json, user must provide token in the header as "token"**
-
+# Group USER
 
 ## GET Access Token [GET /auth/{fname}]
+**Generates Authorization token for the existing User**
 + Parameters
 	+ fname: `Sravan` (string) - Name of the Employee
 
@@ -35,41 +39,74 @@ Section for the people whose name is already available in the data.json file.
 		- success: `true` (boolean) - Created a key or not
 		- token: `A big big key` (string) - This is the token used to add, delete and modify users
 
-## Add a new Employee [POST /checkauth/add/{fname}/{lname}/{age}]
-+ Parameters
-	+ fname: `Sravan` (string) - This is the first name of the new employee
-	+ lname: `Nerella` (string) - This is the last name of the new employee
-	+ age: `20` (number) - This is the age of the new employee
+## Employees [/api/emp]
 
-+ Response 200 (application/json)
+### Add an Employee [POST]
+**This operation allows you to add an employee to the data.json file**
+
++ Request with body (application/x-www-form-urlencoded)
+	+ Headers
+
+			token: tokenvalue
+	+ Body
+
+            {
+                "fname": "Akhil",
+                "lname": "Nerella",
+                "age": `22`
+            }
+
++ Response 201 (application/json)
 	+ Attributes
 		- msg: `Employee added successfully` (string) - Status of the request
 
-## Modify Employee [PUT /checkauth/mod/fname={name}/fname={fname}/lname={lname}/age={age}]
-+ Parameters
-	+ name: `Akhil` (string) - This is current first name of the user
-	+ fname: `Sravan` (string) - This is the modified or new first name of the user
-	+ lname: `Nerella` (string) - This is the modified or new last name of the user
-	+ age: `21` (string) - This is the modified or new age of the user
++ Response 401 (application/json)
+	+ Attributes
+		- msg: `Invalid request` (string) - Status of the request
 
-+ Response 200 (application/json)
+
+### Delete an Employee [DELETE]
+**This operation allows you to delete an employee from the data.json file**
+
++ Request with body (application/x-www-form-urlencoded)
+	+ Headers
+
+			token: tokenvalue
+	+ Body
+
+            {
+                "fname": "Sravan"
+            }
+
++ Response 202 (application/json)
+	+ Attributes
+		- msg: `Name Deleted` (string) - Status of the deletion
+
++ Response 401 (application/json)
+	+ Attributes
+		- msg: `Invalid request` (string) - Status of the request
+
+### Modify an Employee [PUT]
+**This operation allows you to modify an employee details with his existing first name**
+
++ Request with body (application/x-www-form-urlencoded)
+	+ Headers
+
+			token: tokenvalue
+	+ Body
+
+            {
+                "name": "Sravan",
+                "fname": "Akhil",
+                "lname": "Nerella",
+                "age": `22`
+            }
+
++ Response 202 (application/json)
 	+ Attributes
 		- msg: `Modified` (string) - Status of the request
 		- obj (array[Employee])
 
-## Delete Employee [DELETE /checkauth/del/fname={fname}]
-+ Parameters
-	+ fname: `Sravan` (string) - This is name to be deleted from the list
-
-+ Response 200 (application/json)
++ Response 401 (application/json)
 	+ Attributes
-		- msg: `Name deleted` (string) - status of the request
-
-# Data Structures
-
-## Employee (object)
-- fname: `Aditya` (string) - The first name of the employee
-- lname: `Nerella` (string) - The last name of the employee
-- age: `20` (number) - The age of the employee
-- key: `random number` (string) - Random string for now
-
+		- msg: `Invalid request` (string) - Status of the request

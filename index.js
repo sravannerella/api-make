@@ -11,12 +11,13 @@
 // Library variables
 var express = require("express");
 var fs = require("fs");
-var secure = express.Router();
+var router = express.Router();
 var jwt = require('jsonwebtoken');
+var body = require('body-parser');
 
-var addItems = require('./addItems');
-var modFile = require('./modFile');
-var deleteItem = require('./deleteItem');
+var addItems = require('./operations/addItems');
+var modFile = require('./operations/modFile');
+var deleteItem = require('./operations/deleteItem');
 
 // Reading the file using File System and returns the buffer
 var file = fs.readFileSync("data.json");
@@ -29,15 +30,17 @@ module.exports.workers = workers;
 
 var app = express();
 
-app.use("/checkauth", secure);
+app.use(body.urlencoded({extended:true}));
+app.use(body.json());
+app.use("/api", router);
 
-secure.use(function(req, resp, next){
+router.use(function(req, resp, next){
 	var token = req.headers["token"];
 	if(token){
 		jwt.verify(token, process.env.SECRET_KEY, function(err, decode){
 			if(err){
-				resp.send({
-					msg: "Invalid Key"
+				resp.status(401).send({
+					msg: "Token Expired or Invalid Token"
 				});
 			} else{
 				next();
@@ -45,18 +48,18 @@ secure.use(function(req, resp, next){
 		});
 
 	} else{
-		resp.send("NOPE");
+		resp.status(400).send("Bad Request");
 	}
 });
 
 // Add Employee
-secure.post("/add/:name?/:lname?/:age?", addItems.add);
+router.post("/emp", addItems.add);
 
 // Modify the existing data
-secure.put("/mod/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", modFile.mod);
+router.put("/emp", modFile.mod);
 
 // Delete an employee
-secure.delete("/del/fname=:name?", deleteItem.del);
+router.delete("/emp", deleteItem.del);
 
 // API Calls
-require('./apiService')(app, workers);
+require('./auth/apiService')(app, workers);
