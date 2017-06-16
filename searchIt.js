@@ -1,7 +1,7 @@
 var index = require('./index');
-var workers = index.workers;
 
 module.exports = function (data, property){
+	var workers = index.workers;
 	var val = false;
 	for(var key in workers["Employees"]){
 		if(workers["Employees"][key][property]==data){

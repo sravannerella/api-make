@@ -14,6 +14,10 @@ var fs = require("fs");
 var secure = express.Router();
 var jwt = require('jsonwebtoken');
 
+var addItems = require('./addItems');
+var modFile = require('./modFile');
+var deleteItem = require('./deleteItem');
+
 // Reading the file using File System and returns the buffer
 var file = fs.readFileSync("data.json");
 
@@ -25,7 +29,6 @@ module.exports.workers = workers;
 
 var app = express();
 
-var auth = require('./auth');
 app.use("/checkauth", secure);
 
 secure.use(function(req, resp, next){
@@ -37,9 +40,7 @@ secure.use(function(req, resp, next){
 					msg: "Invalid Key"
 				});
 			} else{
-				resp.send({
-					msg: "verified"
-				});
+				next();
 			}
 		});
 
@@ -47,6 +48,15 @@ secure.use(function(req, resp, next){
 		resp.send("NOPE");
 	}
 });
+
+// Add Employee
+secure.post("/add/:name?/:lname?/:age?", addItems.add);
+
+// Modify the existing data
+secure.put("/mod/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", modFile.mod);
+
+// Delete an employee
+secure.delete("/del/fname=:name?", deleteItem.del);
 
 // API Calls
 require('./apiService')(app, workers);

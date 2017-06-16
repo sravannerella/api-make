@@ -1,7 +1,4 @@
 var http = require('http');
-var addItems = require('./addItems');
-var modFile = require('./modFile');
-var deleteItem = require('./deleteItem');
 var searchItem = require('./searchItem');
 
 module.exports = function(app, workers)
@@ -55,30 +52,17 @@ module.exports = function(app, workers)
 		})
 		.put(function(req, resp){
 			resp.send(replyInvalid());
-		});
-
-	app.route(["/add*","/mod*"])
+		})
 		.delete(function(req, resp){
 			resp.send(replyInvalid());
-		});
-
-	app.route("/del*","/mod*")
+		})
 		.post(function(req, resp){
 			resp.send(replyInvalid());
 		});
 
-
-	// Add Employee
-	app.post("/add/:token/:name?/:lname?/:age?", addItems.add);
-
-	// Modify the existing data
-	app.put("/mod/:token/fname=:name?/fname=:fname?/lname=:lname?/age=:age?", modFile.mod);
-
-	// Delete an employee
-	app.delete("/del/:token/fname=:name?", deleteItem.del);
-
 	// Search an employee
 	app.get("/search/fname=:name?", searchItem.search);
+
 
 	process.env.SECRET_KEY = "25asd9eqw3lp";
 	var auth = require('./auth');
