@@ -34,8 +34,17 @@ app.use(body.urlencoded({extended:true}));
 app.use(body.json());
 app.use("/api", router);
 
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Credentials", true);
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, token, Content-Type, Accept");
+	next();
+});
+
 router.use(function(req, resp, next){
+	
 	var token = req.headers["token"];
+	
 	if(token){
 		jwt.verify(token, process.env.SECRET_KEY, function(err, decode){
 			if(err){
@@ -47,8 +56,12 @@ router.use(function(req, resp, next){
 			}
 		});
 
-	} else{
+	} else if(req.method === "OPTIONS"){
+		resp.status(200).send("Connected");
+	}
+	else{
 		resp.status(400).send("Bad Request");
+		console.log(req.method);
 	}
 });
 

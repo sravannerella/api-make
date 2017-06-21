@@ -4,7 +4,7 @@
   "description": "this is a test application which updates employees object by REST API calls",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon index.js"
+    "test": "node index.js"
   },
   "author": "Sravan nerella",
   "license": "ISC",

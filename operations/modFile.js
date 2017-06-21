@@ -15,8 +15,9 @@ module.exports.mod = function(req, resp){
 		reply = {
 			msg:"Invalid request."
 		}
-		resp.status(401).send(reply);
+		resp.status(400).send(reply);
 	} else{
+
 		var jsonVal = searchIt(name, "fname");
 		var key = jsonVal["key"];
 		var val = jsonVal["val"];
@@ -32,12 +33,13 @@ module.exports.mod = function(req, resp){
 				msg: "Modified",
 				obj: workers["Employees"][key]
 			}
-			resp.status(202).send(reply);
+
+			resp.status(200).send(reply);
 		} else{
 			reply = {
 				msg: "Name not found"
 			};
-			resp.status(202).send(reply);
+			resp.status(200).send(reply);
 		}
 	}
 	return true;
